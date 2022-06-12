@@ -15,7 +15,11 @@ module.exports = {
     restricted: true,
     async execute(message, args) {
 
-        args = args.join(" ").split("|")
+        myArgs = args.join(" ").split("|");
+        console.log(myArgs);
+        console.log(myArgs.length);
+        // const myArgs = process.argv.slice(2);
+        // console.log(args[0]);
         
         if (args.length < 1 || args.length > 2) {
             return message.reply(text.wrong_args + text.usage)
@@ -41,11 +45,12 @@ module.exports = {
         if (!config.allow_stream) {
             await channel.updateOverwrite(channel.guild.roles.everyone, {STREAM: false})
         }
-        if (args.length == 2) {
-            await timer.customTimer(message, channel, args[0], args[1])
+        if (myArgs.length == 2) {
+            console.log('creating custom timer')
+            await timer.customTimer(message, channel, myArgs[0], myArgs[1])
         }
-        if (args.length == 1) {
-            await timer.timer(message, channel, args[0])
+        if (myArgs.length == 1) {
+            await timer.timer(message, channel, myArgs[0])
         }
     }
 }

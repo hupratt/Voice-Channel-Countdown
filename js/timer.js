@@ -3,6 +3,9 @@ const text = require(`../config/text_${config.lang}.json`).timer
 let current_timers = []
 const minutes_per_loop = 5
 
+const findFirstDiff = (str1, str2) =>
+  str2[[...str1].findIndex((el, index) => el !== str2[index])];
+
 // -----------------------------------
 // Start
 // -----------------------------------
@@ -14,7 +17,7 @@ async function customTimer(message, channel, time_format, title) {
     // -----------------------------------
     // Needed Variables
     // -----------------------------------
-    let log = ""
+    let log = "";
     if (config.log) {
         log = await message.guild.channels.cache.get(config.log_channel);
         if (log === undefined) {
@@ -43,6 +46,7 @@ async function customTimer(message, channel, time_format, title) {
         diff /= 60;
         diff = Math.round(diff);
         console.log("diff: " + diff)
+        console.log("bday: " + bday)
 
         if (diff <= 0) {
             clearInterval(timerID);
@@ -59,7 +63,12 @@ async function customTimer(message, channel, time_format, title) {
 
         d = format(days, hours, mins)
         s = formatShort(days, hours, mins)
-        out = title.replace("%d", d).replace("%s", s)
+        if (title=='CWL'){
+            out = text.join_in_CWL.replace("%d", d).replace("%s", s)
+        } else{
+            out = text.join_in_CG.replace("%d", d).replace("%s", s)
+        }
+        console.log('out'+out)
         channel.setName(out)
             .catch(e => {
                 clearInterval(timerID)

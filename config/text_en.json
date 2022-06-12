@@ -12,7 +12,9 @@
     "started": "Countdown started! End at: ",
     "stopped": "Countdown stopped! End reached!",
     "error": "Countdown stopped! An error occurred!",
-    "join_in":"Join in %d",
+    "join_in_CWL":"CWL in %d",
+    "join_in_CG":"CG in %d",
+    "join_in":"It starts in %d",
     "join_now":"JOIN NOW!!!"
   },
 
