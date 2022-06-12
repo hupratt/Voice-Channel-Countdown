@@ -9,8 +9,10 @@ const findFirstDiff = (str1, str2) =>
 // -----------------------------------
 // Start
 // -----------------------------------
-async function timer(message, channel, time_format) {
-    customTimer(message, channel, time_format, text.join_in)
+async function timer(message, channel, country_code) {
+    const today = new Date();
+    // start a timer for the next 10 years
+    customTimer(message, channel, today.setFullYear(today.getFullYear() + 10), country_code)
 }
 async function customTimer(message, channel, time_format, title) {
     //title magic keys: %t time
@@ -64,11 +66,15 @@ async function customTimer(message, channel, time_format, title) {
         d = format(days, hours, mins)
         s = formatShort(days, hours, mins)
         if (title=='CWL'){
-            out = text.join_in_CWL.replace("%d", d).replace("%s", s)
+            out = text.join_in_CWL.replace("%d", d)
+        } else if (title=='CG'){
+            out = text.join_in_CG.replace("%d", d)
+        } else if (title=='Paris'){
+            out = text.Paris.replace("%d", now.toLocaleTimeString('en-US', {timeZone: "Europe/Paris", hour: '2-digit', minute:'2-digit' }))
         } else{
-            out = text.join_in_CG.replace("%d", d).replace("%s", s)
+            out = text.Manila.replace("%d", now.toLocaleString('en-US', {timeZone: "Asia/Manila", hour: '2-digit', minute:'2-digit' }))
         }
-        console.log('out'+out)
+
         channel.setName(out)
             .catch(e => {
                 clearInterval(timerID)

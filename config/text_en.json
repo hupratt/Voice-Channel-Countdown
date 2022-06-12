@@ -14,6 +14,8 @@
     "error": "Countdown stopped! An error occurred!",
     "join_in_CWL":"CWL in %d",
     "join_in_CG":"CG in %d",
+    "Paris":"🇫🇷 %d",
+    "Manila":"🇵🇭 %d",
     "join_in":"It starts in %d",
     "join_now":"JOIN NOW!!!"
   },
