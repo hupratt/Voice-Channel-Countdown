@@ -16,8 +16,10 @@
     "join_in_CG":"CG in %d",
     "Paris":"🇫🇷 %d",
     "Manila":"🇵🇭 %d",
-    "join_in":"It starts in %d",
-    "join_now":"JOIN NOW!!!"
+    "join_in":"%s in %d",
+    "join_now":"%s: JOIN NOW!!!",
+    "CG":"2022-06-22T09:00:00",
+    "CWL":"2022-07-01T09:00:00"
   },
 
   "commands": {
