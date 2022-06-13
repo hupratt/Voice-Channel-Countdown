@@ -78,7 +78,7 @@ async function customTimer(message, channel, time_format, title) {
   function loop() {
     let diff = computeMinuteDiff(time_format);
     let dateAsStringOutput = formatOutput(diff);
-
+    let now = new Date();
     if (diff <= 0) {
       //clearInterval(timerID);
       //console.log("stop")
@@ -86,19 +86,19 @@ async function customTimer(message, channel, time_format, title) {
       if (diff <= sevenDaysInMinutes) {
         let i = 1;
         let bday = new Date(time_format);
-        console.log("time_format " + time_format);
+        // console.log("time_format " + time_format);
         let aMonthFromNow = addMonths(1, bday);
-        console.log("aMonthFromNow " + aMonthFromNow);
+        // console.log("aMonthFromNow " + aMonthFromNow);
         let secaMonthFromNow = aMonthFromNow.getTime();
         let secbday = bday.getTime();
         while (secaMonthFromNow < secbday) {
           aMonthFromNow = addMonths(i, bday);
-          console.log("aMonthFromNow increments " + aMonthFromNow);
+          //   console.log("aMonthFromNow increments " + aMonthFromNow);
           i++;
         }
         let diff2 = computeMinuteDiff(aMonthFromNow);
         let dateAsStringOutput2 = formatOutput(diff2);
-        console.log("replacing" + diff2);
+        // console.log("replacing" + diff2);
         let out = text.join_in
           .replace("%d", dateAsStringOutput2)
           .replace("%s", title);
@@ -171,7 +171,7 @@ async function customTimer(message, channel, time_format, title) {
 
   const timerID = setInterval(loop, minutes_per_loop * 60 * 1000);
   current_timers.push(timerID);
-  console.log("start");
+  //   console.log("start");
   message.reply(text.started + time_format);
 
   // -----------------------------------
