@@ -17,8 +17,6 @@ module.exports = {
     myArgs = args.join(" ").split("|");
     console.log(myArgs);
     console.log(myArgs.length);
-    // const myArgs = process.argv.slice(2);
-    // console.log(args[0]);
 
     if (args.length < 1 || args.length > 2) {
       return message.reply(text.wrong_args + text.usage);

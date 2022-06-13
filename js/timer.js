@@ -1,8 +1,7 @@
 const config = require("../config/config.json");
 const text = require(`../config/text_${config.lang}.json`).timer;
 let current_timers = [];
-const minutes_per_loop = 1;
-let bday;
+const minutes_per_loop = 5;
 
 // -----------------------------------
 // Start
@@ -17,6 +16,38 @@ async function timer(message, channel, country_code) {
     country_code
   );
 }
+
+const computeMinuteDiff = (dateString) => {
+  let now = new Date();
+  let dateObj = new Date(dateString);
+  let diff = (dateObj.getTime() - now.getTime()) / 1000;
+  diff /= 60;
+  diff = Math.round(diff);
+  console.log("diff: " + diff);
+
+  return diff;
+};
+
+const formatOutput = (diff) => {
+  let days = Math.floor(diff / (60 * 24));
+  let hours = Math.floor((diff - days * 60 * 24) / 60);
+  let mins = diff % 60;
+
+  let d = format(days, hours, mins);
+  console.log("d: " + d);
+  return d;
+};
+
+const minutesToDays = (days) => {
+  return 1 * 60 * 24 * days;
+};
+
+function addMonths(numOfMonths, date = new Date()) {
+  date.setMonth(date.getMonth() + numOfMonths);
+
+  return date;
+}
+
 async function customTimer(message, channel, time_format, title) {
   //title magic keys: %t time
   // -----------------------------------
@@ -30,7 +61,7 @@ async function customTimer(message, channel, time_format, title) {
     }
   }
   let now = new Date();
-  bday = new Date(time_format);
+  let bday = new Date(time_format);
 
   if (isNaN(bday.getTime())) return message.reply("");
 
@@ -45,73 +76,91 @@ async function customTimer(message, channel, time_format, title) {
   // Rename Looper
   // -----------------------------------
   function loop() {
-    now = new Date();
-    bday = new Date(time_format);
-    diff = (bday.getTime() - now.getTime()) / 1000;
-    diff /= 60;
-    diff = Math.round(diff);
-    console.log("diff: " + diff);
-    console.log("bday: " + bday);
+    let diff = computeMinuteDiff(time_format);
+    let dateAsStringOutput = formatOutput(diff);
 
     if (diff <= 0) {
       //clearInterval(timerID);
       //console.log("stop")
-      if (diff <= -1) {
+      const sevenDaysInMinutes = -Math.abs(minutesToDays(7));
+      if (diff <= sevenDaysInMinutes) {
         let i = 1;
-        while (bday < now) {
-          bday = new Date(bday.setMonth(bday.getMonth() + i));
+        let bday = new Date(time_format);
+        console.log("time_format " + time_format);
+        let aMonthFromNow = addMonths(1, bday);
+        console.log("aMonthFromNow " + aMonthFromNow);
+        let secaMonthFromNow = aMonthFromNow.getTime();
+        let secbday = bday.getTime();
+        while (secaMonthFromNow < secbday) {
+          aMonthFromNow = addMonths(i, bday);
+          console.log("aMonthFromNow increments " + aMonthFromNow);
           i++;
-          console.log("iteration " + bday);
         }
-        diff = (bday.getTime() - now.getTime()) / 1000;
-        diff /= 60;
-        diff = Math.round(diff);
-        out = text.join_in.replace("%d", d).replace("%s", title);
+        let diff2 = computeMinuteDiff(aMonthFromNow);
+        let dateAsStringOutput2 = formatOutput(diff2);
+        console.log("replacing" + diff2);
+        let out = text.join_in
+          .replace("%d", dateAsStringOutput2)
+          .replace("%s", title);
+        channel.setName(out).catch((e) => {
+          clearInterval(timerID);
+          return message.reply(text.error);
+        });
+        if (config.log) {
+          log.send("Format: " + out).catch((e) => {
+            config.log = false;
+          });
+        }
       } else {
-        channel.setName(text.join_now.replace("%s", title));
+        let out = text.join_now.replace("%s", title);
+        channel.setName(out).catch((e) => {
+          clearInterval(timerID);
+          return message.reply(text.error);
+        });
+        if (config.log) {
+          log.send("Format: " + out).catch((e) => {
+            config.log = false;
+          });
+        }
       }
       //channel.updateOverwrite(channel.guild.roles.everyone, {CONNECT: true});
       //current_timers.slice(current_timers.indexOf(timerID), 1)
       //return message.reply(text.stopped);
-    }
-
-    days = Math.floor(diff / (60 * 24));
-    hours = Math.floor((diff - days * 60 * 24) / 60);
-    mins = diff % 60;
-
-    d = format(days, hours, mins);
-    s = formatShort(days, hours, mins);
-    if (title == "Paris") {
-      out = text.Paris.replace(
-        "%d",
-        now.toLocaleTimeString("en-US", {
-          timeZone: "Europe/Paris",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    } else if (title == "Manila") {
-      out = text.Manila.replace(
-        "%d",
-        now.toLocaleString("en-US", {
-          timeZone: "Asia/Manila",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    } else if (title.length > 0) {
-      out = text.join_in.replace("%d", d).replace("%s", title);
     } else {
-      out = text.join_now;
-    }
-    channel.setName(out).catch((e) => {
-      clearInterval(timerID);
-      return message.reply(text.error);
-    });
-    if (config.log) {
-      log.send("Format: " + out).catch((e) => {
-        config.log = false;
+      if (title == "Paris") {
+        out = text.Paris.replace(
+          "%d",
+          now.toLocaleTimeString("en-US", {
+            timeZone: "Europe/Paris",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
+      } else if (title == "Manila") {
+        out = text.Manila.replace(
+          "%d",
+          now.toLocaleString("en-US", {
+            timeZone: "Asia/Manila",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
+      } else if (title.length > 0) {
+        out = text.join_in
+          .replace("%d", dateAsStringOutput)
+          .replace("%s", title);
+      } else {
+        out = text.join_now;
+      }
+      channel.setName(out).catch((e) => {
+        clearInterval(timerID);
+        return message.reply(text.error);
       });
+      if (config.log) {
+        log.send("Format: " + out).catch((e) => {
+          config.log = false;
+        });
+      }
     }
   }
   // -----------------------------------
