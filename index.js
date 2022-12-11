@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Node's native file system module.
 const fs = require('fs');
 

@@ -31,7 +31,8 @@ This bot can run the following commands (and more like `help`):
 
 ## Run
 Run ```index.js``` with ```npm start``` or ```node index.js```.
-
+To run in the background use (npm run start&)
+To close it you'll have to use ps -ef | grep node
 
 
 
